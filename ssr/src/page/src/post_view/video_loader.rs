@@ -25,7 +25,6 @@ use super::{overlay::VideoDetailsOverlay, PostDetails};
 #[component]
 pub fn BgView(
     video_queue: RwSignal<IndexSet<PostDetails>>,
-    current_idx: RwSignal<usize>,
     idx: usize,
     children: Children,
 ) -> impl IntoView {
@@ -33,7 +32,6 @@ pub fn BgView(
     let uid = move || post().as_ref().map(|q| q.uid.clone()).unwrap_or_default();
 
     let (is_connected, _) = account_connected_reader();
-    let (show_login_popup, set_show_login_popup) = signal(true);
 
     let (show_refer_login_popup, set_show_refer_login_popup) = signal(true);
     let (referrer_store, _, _) = use_referrer_store();
@@ -44,15 +42,6 @@ pub fn BgView(
     let (show_onboarding_popup, set_show_onboarding_popup) = signal(false);
     let (is_onboarded, set_onboarded, _) =
         use_local_storage::<bool, FromToStringCodec>(USER_ONBOARDING_STORE);
-
-    Effect::new(move |_| {
-        if current_idx.get() % 5 != 0 {
-            set_show_login_popup.update(|n| *n = false);
-        } else {
-            set_show_login_popup.update(|n| *n = true);
-        }
-        Some(())
-    });
 
     Effect::new(move |_| {
         if onboarding_eligible_post_context.can_place_bet.get() && (!is_onboarded.get()) {

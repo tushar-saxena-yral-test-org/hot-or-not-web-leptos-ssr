@@ -16,6 +16,7 @@ pkgs.mkShell {
     rustup
     openssl
     git
+    mold
     protobuf_21
   ] ++ (if pkgs.stdenv.isDarwin then [
       darwin.apple_sdk.frameworks.Foundation
