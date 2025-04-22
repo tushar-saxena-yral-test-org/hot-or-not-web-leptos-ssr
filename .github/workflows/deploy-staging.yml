@@ -21,7 +21,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: build-musl
-      - run: chmod +x target/x86_64-unknown-linux-musl/release/hot-or-not-web-leptos-ssr
+      - run: chmod +x target/x86_64-unknown-linux-musl/prod-release/hot-or-not-web-leptos-ssr
       - uses: superfly/flyctl-actions/setup-flyctl@master
       - name: Set secret tokens
         run: |

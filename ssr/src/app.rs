@@ -95,6 +95,7 @@ pub fn shell(options: LeptosOptions) -> impl IntoView {
             <head>
                 <meta charset="utf-8"/>
                 <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                <script type="module" src="/js/sentry-init.js" async></script>
                 <Script async_="true">
                     {r#"
                     (function(w,d,s,l,i){
@@ -189,11 +190,6 @@ pub fn App() -> impl IntoView {
                 "#}
                 </Script>
             </Show>
-            <Script
-            async_="true"
-            src="https://sentry.yral.com/js-sdk-loader/3f7d672f8461961bd7b6bec57acf7f18.min.js"
-            crossorigin="anonymous"
-            ></Script>
 
             <Router>
             <main class="bg-black" id="body">
@@ -233,6 +229,7 @@ pub fn App() -> impl IntoView {
                         <Route path=path!("/pnd/withdraw/success") view=withdrawal::result::Success />
                         <Route path=path!("/pnd/withdraw/failure") view=withdrawal::result::Failure />
                         <Route path=path!("/terms-ios") view=TermsIos/>
+
                         // {
                         //     #[cfg(any(feature = "local-bin", feature = "local-lib"))]
                         //     view! {
