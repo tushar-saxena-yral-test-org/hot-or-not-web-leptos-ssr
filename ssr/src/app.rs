@@ -114,7 +114,6 @@ pub fn shell(options: LeptosOptions) -> impl IntoView {
                 <HashedStylesheet id="leptos" options=options.clone()/>
                 <HydrationScripts options/>
                 <MetaTags/>
-
             </head>
             <body>
                 <App/>
