@@ -88,17 +88,17 @@ fn GoogleAuthRedirectorRoute() -> impl MatchNestedRoutes + Clone {
     }
 }
 
-    pub fn shell(options: LeptosOptions) -> impl IntoView {
-        view! {
-            <!DOCTYPE html>
-            <html lang="en">
-                <head>
-                    <meta charset="utf-8"/>
-                    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-                    <script type="module" src="/js/sentry-init.js" async></script>
-                    <script type="module" src="/js/mixpanel-init.js" async></script>
-                    <Script async_="true">
-                        {r#"
+pub fn shell(options: LeptosOptions) -> impl IntoView {
+    view! {
+        <!DOCTYPE html>
+        <html lang="en">
+            <head>
+                <meta charset="utf-8"/>
+                <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                <script type="module" src="/js/sentry-init.js" async></script>
+                <script type="module" src="/js/mixpanel-init.js" async></script>
+                <Script async_="true">
+                    {r#"
                         (function(w,d,s,l,i){
                             w[l]=w[l]||[];
                             w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});
@@ -109,19 +109,19 @@ fn GoogleAuthRedirectorRoute() -> impl MatchNestedRoutes + Clone {
                             f.parentNode.insertBefore(j,f);
                         })(window,document,'script','dataLayer','GTM-MNBWSPVJ');
                         "#}
-                    </Script>
-                    <AutoReload options=options.clone() />
-                    <HashedStylesheet id="leptos" options=options.clone()/>
-                    <HydrationScripts options/>
-                    <MetaTags/>
-                    
-                </head>
-                <body>
-                    <App/>
-                </body>
-            </html>
-        }
+                </Script>
+                <AutoReload options=options.clone() />
+                <HashedStylesheet id="leptos" options=options.clone()/>
+                <HydrationScripts options/>
+                <MetaTags/>
+
+            </head>
+            <body>
+                <App/>
+            </body>
+        </html>
     }
+}
 
 #[component]
 pub fn App() -> impl IntoView {
