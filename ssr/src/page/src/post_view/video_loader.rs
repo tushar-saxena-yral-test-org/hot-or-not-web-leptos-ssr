@@ -152,39 +152,13 @@ pub fn VideoView(
 
     let video_views_watch_multiple = RwSignal::new(false);
 
-    let _ = use_event_listener(_ref, ev::pause, move |_evt| {
-        let Some(video) = _ref.get() else {
+    let _ = use_event_listener(_ref, ev::playing, move |_evt| {
+        let Some(_) = _ref.get() else {
             return;
         };
 
-        let duration = video.duration();
-        let current_time = video.current_time();
-        if current_time < 0.5 {
-            return;
-        }
-
-        let percentage_watched = ((current_time / duration) * 100.0) as u8;
-        send_view_detail_action.dispatch((percentage_watched, 0_u8));
-    });
-
-    let _ = use_event_listener(_ref, ev::timeupdate, move |_evt| {
-        let Some(video) = _ref.get() else {
-            return;
-        };
-
-        let duration = video.duration();
-        let current_time = video.current_time();
-        let percentage_watched = ((current_time / duration) * 100.0) as u8;
-
-        if current_time < 0.95 * duration {
-            video_views_watch_multiple.set(false);
-        }
-
-        if percentage_watched >= 95 && !video_views_watch_multiple.get() {
-            send_view_detail_action.dispatch((percentage_watched, 0_u8));
-
-            video_views_watch_multiple.set(true);
-        }
+        send_view_detail_action.dispatch((100, 0_u8));
+        video_views_watch_multiple.set(true);
     });
 
     VideoWatched.send_event(post, _ref);
