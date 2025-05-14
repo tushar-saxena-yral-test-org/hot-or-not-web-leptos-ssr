@@ -7,7 +7,14 @@ use leptos::{either::Either, prelude::*};
 use leptos_icons::*;
 use leptos_use::use_interval_fn;
 use state::canisters::{authenticated_canisters, unauth_canisters};
-use utils::{send_wrap, time::to_hh_mm_ss, try_or_redirect_opt};
+use utils::{
+    mixpanel::mixpanel_events::{
+        IsHotOrNot, MixPanelEvent, MixpanelHotOrNotPlayedProps, UserCanisterAndPrincipal,
+    },
+    send_wrap,
+    time::to_hh_mm_ss,
+    try_or_redirect_opt,
+};
 use web_time::Duration;
 use yral_canisters_client::individual_user_template::{BettingStatus, PlacedBetDetail};
 use yral_canisters_common::{
@@ -107,6 +114,8 @@ fn HNButtonOverlay(
     bet_direction: RwSignal<Option<VoteKind>>,
     refetch_bet: Trigger,
 ) -> impl IntoView {
+    let is_hot_or_not = expect_context::<IsHotOrNot>();
+    is_hot_or_not.set(post.canister_id, post.post_id, true);
     let place_bet_action = Action::new(
         move |(canisters, bet_direction, bet_amount): &(Canisters<true>, VoteKind, u64)| {
             let post_can_id = post.canister_id;
@@ -114,6 +123,7 @@ fn HNButtonOverlay(
             let cans = canisters.clone();
             let bet_amount = *bet_amount;
             let bet_direction = *bet_direction;
+            let post_mix = post.clone();
             send_wrap(async move {
                 match cans
                     .vote_with_cents_on_post_via_cloudflare(
@@ -125,7 +135,26 @@ fn HNButtonOverlay(
                     )
                     .await
                 {
-                    Ok(_) => Some(()),
+                    Ok(_) => {
+                        let user = Some(UserCanisterAndPrincipal {
+                            user_id: cans.user_canister().to_text(),
+                            canister_id: cans.user_canister().to_text(),
+                        });
+                        let is_hot_or_not = true;
+
+                        MixPanelEvent::track_hot_or_not_played(MixpanelHotOrNotPlayedProps {
+                            publisher_user_id: post_mix.poster_principal.to_text(),
+                            is_logged_in: user.is_some(),
+                            user_id: user.clone().map(|f| f.user_id),
+                            canister_id: user.map(|f| f.canister_id),
+                            video_id: post_mix.uid.clone(),
+                            is_nsfw: post_mix.is_nsfw,
+                            is_hotor_not: is_hot_or_not,
+                            view_count: post_mix.views,
+                            like_count: post_mix.likes,
+                        });
+                        Some(())
+                    }
                     Err(e) => {
                         log::error!("{e}");
                         None
